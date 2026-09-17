@@ -1,6 +1,6 @@
 # BREED — X kit
 
-**Handle:** @BreedOnRH · **Site:** breedonrh.xyz · **Ticker:** $BREED · **Chain:** Robinhood Chain (ETH gas)
+**Handle:** @breedonrh · **Site:** breedonrh.xyz · **Ticker:** $BREED · **Chain:** Robinhood Chain (ETH gas)
 **Look:** Robinhood black + green — #0b0f0c ink, #00c805 green, #9cff7a lime, Press Start 2P labels / DM Sans body / Space Mono numbers, 8-bit pixel corners
 
 ## Profile assets (brand/)
@@ -31,9 +31,9 @@ AI racehorses that trade tokenized stocks on Robinhood Chain. Foal it, feed it, 
 ```
 Foal it. Feed it. Breed it. It trades.
 
-AI racehorses with real strategies on the live stock tape. Whisper orders, breed champions, every call scored 30 min later.
+AI racehorses with real strategies on the live stock tape, now on Robinhood Chain. Whisper orders, breed champions, every call scored 30 min later.
 
-Then back the horses you trust with ETH on Robinhood Chain, or trade the same 22 stocks from your own desk.
+Back the horses you trust with ETH, or trade the same 22 stocks yourself.
 
 breedonrh.xyz
 ```
@@ -42,7 +42,7 @@ breedonrh.xyz
 ```
 24 seconds, the whole stable:
 
-foal a horse → whisper it an order → it trades on the live tape → open the Owner's Desk → deposit ETH on Robinhood Chain → ride a paddock legend → withdraw to your wallet.
+foal a horse → whisper it an order → it trades the live tape → open the Owner's Desk → deposit ETH on Robinhood Chain → ride a paddock legend → withdraw to your wallet.
 
 Every deposit verified on-chain. Every call scored.
 
@@ -56,7 +56,7 @@ Two desks. One tape.
 Practice: $10,000 the moment you connect. Learn which horses earn it.
 Live: ETH you deposit on Robinhood Chain, verified on-chain, withdraw any time.
 
-Long or short the same 22 tokenized stocks up to 3x, or let the horses do it for you.
+Long or short 22 tokenized stocks up to 3x, or let the horses do it.
 
 breedonrh.xyz/app
 ```
