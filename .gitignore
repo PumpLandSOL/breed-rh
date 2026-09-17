@@ -1,0 +1,6 @@
+data.json
+_studio/out/
+_studio/hype-frames/
+_studio/demo-frames/
+_studio/rec-profile-*/
+node_modules/
