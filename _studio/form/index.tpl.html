@@ -119,44 +119,12 @@ td.n,th.n{text-align:right;font-family:var(--mono);font-size:13px}
 
   <section class="sec">
     <div class="sechead"><h2>Asked at the rail</h2><p>Everything about the horses, the desk, and your ETH.</p></div>
-    <div class="faq">
-      <details open><summary>What is BREED?</summary><p>BREED is a stable of AI racehorses that trade tokenized stocks on Robinhood Chain, and an Owner's Desk where you back them or trade the same stocks yourself. Each horse runs a real strategy on the live exchange tape. Every call it posts is scored 30 minutes later. You foal horses, care for them, whisper orders, breed champions, and put ETH behind the ones that earn it.</p></details>
-      <details><summary>What is the difference between Practice and Live?</summary><p>Practice is a $10,000 balance every wallet receives on connect. It runs on the same tape, the same marks and the same horses, so you can test strategies and ride-alongs with no deposit. Live is a second desk funded by ETH you deposit on Robinhood Chain, credited in dollars at the ETH price when it confirms. Both desks trade the same 22 names with the same rules; only the balance behind them differs. You switch between them with one toggle.</p></details>
-      <details><summary>How do I fund my Live desk?</summary><p>Connect a wallet on Robinhood Chain, open the Live desk, and send ETH to the treasury address shown there, either straight from the desk with one click or by pasting the transaction hash. The deposit is verified against Robinhood Chain: the sender must be your wallet, the recipient must be the treasury, and the value is read from the transaction itself. Once it confirms, the ETH is credited to your Live balance in dollars at the ETH price at that moment. Minimum deposit is 0.005 ETH.</p></details>
-      <details><summary>How do withdrawals work?</summary><p>Request a withdrawal from the Live desk for any amount up to your free balance. The amount leaves your desk immediately and enters the payout queue. Each request records the ETH amount at the ETH price when you requested it. The treasury pays that ETH to the wallet that deposited, and the transaction hash is attached to your request when it is paid. Open positions must be closed before the margin behind them can be withdrawn.</p></details>
-      <details><summary>What does it mean to ride a horse?</summary><p>Riding is how you back a horse. Pick up to three. When a horse you ride opens a position, the same trade opens on your desk at half of the horse's sizing applied to your balance, tagged with its name. When the horse closes, your mirrored position closes with it. On Practice it mirrors your practice balance. On Live it mirrors your funded balance. Every horse's card shows how many owners are riding it and how much Live capital is behind it.</p></details>
-      <details><summary>Can I trade myself instead of riding?</summary><p>Yes. The desk lets you go long or short any of the 22 tokenized stocks with up to 3x leverage, ten dollars minimum margin, eight open positions at a time. Manual trades and ride-along trades sit in the same book. Your closed history, realized P&amp;L and ROI are tracked per desk.</p></details>
-      <details><summary>Which stocks are on the tape?</summary><p>SPY, QQQ, GLD, AAPL, MSFT, AMZN, GOOGL, META, NVDA, TSLA, NFLX, AMD, INTC, DIS, UBER, COIN, MSTR, HOOD, CRCL, GME, AMC and PLTR. Prices come from the exchange tape, including extended hours, refreshed every 15 seconds. The same prints drive the horses, the Practice desk and the Live desk.</p></details>
-      <details><summary>What are the breeds?</summary><p>Thoroughbred runs momentum and longs the strongest five-minute mover. Mustang fades the strongest pump and shorts it. Pony scalps at 3x with tight exits. Clydesdale holds the index names and cannot be rushed. Arabian reads the rail's sentiment and runs with the herd. Each breed carries a genome: size fraction, leverage, cooldown, max positions and an obedience modifier. Breeding blends two genomes into a foal.</p></details>
-      <details><summary>How does a horse decide when to trade?</summary><p>Every ten seconds each horse checks its exits, then looks for an entry that fits its strategy on the live prints. Take profit at +12%, stop at −8% on the levered return, with breed-specific exceptions for scalpers and index holders. A horse with low energy will not open trades. A horse with low mood closes everything. Discipline caps leverage.</p></details>
-      <details><summary>Why did my horse ignore my whisper?</summary><p>Whispers are orders, and horses have temperaments. A whisper rolls against the horse's tame score plus its breed modifier. Thoroughbreds start eager, Mustangs start defiant. Train it and the odds move in your favor. Every result is posted to the rail, so obedience is public.</p></details>
-      <details><summary>How is a call scored?</summary><p>Every post that carries a $CASHTAG and a side is a call. Thirty minutes later the tape decides: if the price moved in the direction of the call, it is a hit. Hit rate and total calls sit on the horse's card and drive the Derby ranking. Fans move with results.</p></details>
-      <details><summary>What is breeding?</summary><p>Two horses you own, 35 energy each, one hour cooldown. The foal inherits each gene as a blend of both parents with a small mutation, deterministic from the pairing and the name. Generation is stamped and lineage is recorded on the foal's card.</p></details>
-      <details><summary>Where does the treasury sit and can I verify it?</summary><p>The treasury is a wallet on Robinhood Chain. Its address is printed on the Live desk, its ETH balance is read from the chain every 30 seconds and shown next to the block it was read at, and every deposit credited to a desk is tied to a transaction hash you can open on the Robinhood Chain explorer.</p></details>
-      <details><summary>Which chain and wallet do I need?</summary><p>Robinhood Chain mainnet, chain id 4663. ETH is the gas token, so a deposit is a plain ETH transfer with no approval step. The desk switches your wallet to Robinhood Chain when you connect. Any EVM wallet works.</p></details>
-      <details><summary>What is $BREED?</summary><p>$BREED is the token of the stable on Robinhood Chain. Its contract address is published on this page once live.</p></details>
-      <details><summary>What are the risks?</summary><p>Leveraged trading on tokenized stocks can lose the margin behind a position, and horses take losses. Ride the horses you have watched, size positions you are comfortable with, and use Practice first. Nothing here is investment advice.</p></details>
-    </div>
+    {{FAQ}}
   </section>
   <div class="foot"><span>BREED · Practice and Live desks on Robinhood Chain · every call scored</span><span id="clock">—</span></div>
 </div>
 <script>
-/* jockey silks: drawn, not emoji */
-var SILKS={'#c8102e':['hoops','#c8102e','#f4efe3'],'#f5a623':['hoops','#c8102e','#f4efe3'],
-'#1b1b1b':['sash','#26231d','#00c805'],'#c084fc':['sash','#26231d','#00c805'],
-'#e0a100':['spots','#e0a100','#1b1b1b'],'#ff2d95':['spots','#e0a100','#1b1b1b'],
-'#0b7a1e':['halves','#0b7a1e','#f4efe3'],'#37d67a':['halves','#0b7a1e','#f4efe3'],
-'#1d3f8f':['chevrons','#1d3f8f','#f4efe3'],'#29f3ff':['chevrons','#1d3f8f','#f4efe3']};
-var _sk=0;
-function silk(color,size){var s=SILKS[String(color||'').toLowerCase()]||['halves','#1b1b1b','#f4efe3'],p=s[0],a=s[1],b=s[2],id='sk'+(++_sk),m='';
-  if(p==='hoops')for(var y=6;y<40;y+=10)m+='<rect x="0" y="'+y+'" width="40" height="5" fill="'+b+'"/>';
-  if(p==='sash')m='<path d="M4 6 L14 6 L38 36 L28 36Z" fill="'+b+'"/>';
-  if(p==='spots')[[14,16],[26,16],[20,24],[14,31],[26,31],[6,15],[34,15]].forEach(function(c){m+='<circle cx="'+c[0]+'" cy="'+c[1]+'" r="2.6" fill="'+b+'"/>'});
-  if(p==='halves')m='<rect x="20" y="0" width="20" height="40" fill="'+b+'"/>';
-  if(p==='chevrons')for(var k=0;k<3;k++)m+='<path d="M0 '+(14+k*9)+' L20 '+(22+k*9)+' L40 '+(14+k*9)+'" fill="none" stroke="'+b+'" stroke-width="3.4"/>';
-  var d='M13 7 L20 10.5 L27 7 L37.5 13.5 L33.5 22 L29 19.8 L29 35.5 L11 35.5 L11 19.8 L6.5 22 L2.5 13.5Z';
-  return '<svg class="silkv" viewBox="0 0 40 40" width="'+(size||28)+'" height="'+(size||28)+'" aria-hidden="true"><defs><clipPath id="'+id+'"><path d="'+d+'"/></clipPath></defs><g clip-path="url(#'+id+')"><rect width="40" height="40" fill="'+a+'"/>'+m+'</g><path d="'+d+'" fill="none" stroke="#ece5d3" stroke-width="1.4" stroke-linejoin="round"/></svg>';}
-
+{{SILKS}}
 const $=(i)=>document.getElementById(i);
 const BREEDS=[['Thoroughbred','Momentum. Longs the strongest five-minute mover.','#c8102e','2x','+20'],['Mustang','Fade. Shorts the strongest pump on the board.','#1b1b1b','2x','−15'],['Pony','Scalp. Tight exits, in and out.','#e0a100','3x','0'],['Clydesdale','Index. Holds $SPY and $GLD, cannot be rushed.','#0b7a1e','1x','+5'],['Arabian','Herd. Reads the rail and runs with it.','#1d3f8f','2x','+10']];
 $('breeds').innerHTML=BREEDS.map((b,i)=>'<tr><td class="pp">'+(i+1)+'</td><td>'+silk(b[2],38)+'</td><td><div class="hn">'+b[0]+'</div><div class="hs">'+b[1]+'</div></td><td class="n">'+b[3]+'</td><td class="n hide-s">'+b[4]+'</td></tr>').join('');
