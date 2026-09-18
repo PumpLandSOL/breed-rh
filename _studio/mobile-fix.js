@@ -12,8 +12,8 @@ const CSS=`
 .hero h1{font-size:44px!important}.hero p{font-size:16px!important}
 .btn.big{font-size:9.5px!important;padding:13px 16px!important}
 .silks{gap:5px!important}.silk{font-size:0!important}.silk .e{font-size:26px!important;top:50%!important;transform:translateY(-50%)}
-.tote{grid-template-columns:repeat(5,1fr)!important}.tote>div{padding:10px 3px!important;text-align:center}
-.tote .l{font-size:5px!important;letter-spacing:0!important}.tote .v{font-size:12px!important}
+.tote{grid-template-columns:repeat(3,1fr)!important}.tote>div{border-bottom:1px solid rgba(255,255,255,.1)}.tote>div{padding:10px 3px!important;text-align:center}
+.tote .l{font-size:6.5px!important;letter-spacing:0!important}.tote .v{font-size:15px!important}
 .sec h2{font-size:28px!important}
 .wrap{padding:0 14px!important}
 .tabs{flex-wrap:nowrap!important;overflow-x:auto;justify-content:flex-start!important;scrollbar-width:none}.tabs::-webkit-scrollbar{display:none}

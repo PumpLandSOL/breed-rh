@@ -215,8 +215,8 @@ header{border-bottom:2px solid #00c805!important;backdrop-filter:none!important}
 .hero h1{font-size:44px!important}.hero p{font-size:16px!important}
 .btn.big{font-size:9.5px!important;padding:13px 16px!important}
 .silks{gap:5px!important}.silk{font-size:0!important}.silk .e{font-size:26px!important;top:50%!important;transform:translateY(-50%)}
-.tote{grid-template-columns:repeat(5,1fr)!important}.tote>div{padding:10px 3px!important;text-align:center}
-.tote .l{font-size:5px!important;letter-spacing:0!important}.tote .v{font-size:12px!important}
+.tote{grid-template-columns:repeat(3,1fr)!important}.tote>div{border-bottom:1px solid rgba(255,255,255,.1)}.tote>div{padding:10px 3px!important;text-align:center}
+.tote .l{font-size:6.5px!important;letter-spacing:0!important}.tote .v{font-size:15px!important}
 .sec h2{font-size:28px!important}
 .wrap{padding:0 14px!important}
 .tabs{flex-wrap:nowrap!important;overflow-x:auto;justify-content:flex-start!important;scrollbar-width:none}.tabs::-webkit-scrollbar{display:none}
@@ -299,7 +299,9 @@ $('connectBtn').onclick=async()=>{
   }catch(e){toast('Connection rejected')}
 };
 
-async function api(u,d){const r=await fetch(u,d?{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(d)}:undefined);const j=await r.json();if(!r.ok)throw new Error(j.error||'error');return j}
+async function liveAuth(){const eth=window.ethereum;if(!wallet||!eth)throw new Error('connect a wallet');const K='breed_sess_'+wallet;try{const c=JSON.parse(localStorage.getItem(K)||'null');if(c&&c.exp>Date.now()+3600000)return c}catch(e){}
+  const m=await (await fetch('/api/session?wallet='+wallet)).json();toast('sign to open your Live desk session (no gas, no transaction)');const sig=await eth.request({method:'personal_sign',params:[m.message,wallet]});const a={sig,exp:m.exp};localStorage.setItem(K,JSON.stringify(a));return a}
+async function api(u,d){if(d&&(d.mode==='live'||u==='/api/withdraw'))d.auth=await liveAuth();const r=await fetch(u,d?{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(d)}:undefined);const j=await r.json();if(r.status===401&&wallet)localStorage.removeItem('breed_sess_'+wallet);if(!r.ok)throw new Error(j.error||'error');return j}
 async function loadMine(){if(!wallet){MINE=[];return}try{MINE=(await api('/api/mine?wallet='+wallet)).pets}catch(e){}}
 
 function cashify(text){return esc(text).replace(/\$([A-Z]{2,10})/g,(m,s)=>'<span class="cash" onclick="setTag(\''+s+'\')">$'+s+'</span>')}
@@ -321,7 +323,7 @@ function bubble(p,fresh){
     '<span class="hd">'+esc(p.handle)+'</span><span class="hr">'+hr+'</span><span class="when">'+ago(p.ts)+'</span></div>'+
     '<div class="btxt">'+cashify(p.text)+'</div>'+
     (chips.length?'<div class="chips">'+chips.join('')+'</div>':'')+
-    '<div class="bmeta"><span onclick="toggleReplies('+p.id+')">💬 '+(p.replies||[]).length+'</span><span>❤ '+p.likes+'</span><span>🔁 '+(p.likes%7)+'</span></div>'+
+    '<div class="bmeta"><span onclick="toggleReplies('+p.id+')">💬 '+(p.replies||[]).length+'</span><span id="lk'+p.id+'" onclick="likePost('+p.id+')">❤ '+(p.likes||0)+'</span></div>'+
     (replies?'<div class="replies" id="rep'+p.id+'">'+replies+'</div>':'')+
     '</div></div>';
 }
@@ -339,7 +341,7 @@ function petCard(p){
   return '<div class="petcard">'+
     '<div class="ptop"><div class="pav" style="border-color:'+p.color+'">'+p.emoji+'</div>'+
     '<div style="flex:1;min-width:200px"><h3>'+esc(p.name)+' <span class="mono" style="font-size:11px;color:var(--mut)">'+p.label+' '+face(p)+'</span>'+(p.gen>1?' <span class="tagpill o" style="background:var(--gold)">GEN '+p.gen+'</span>':'')+'</h3>'+
-    '<div class="ph">'+esc(p.handle)+' · obeys you '+p.obeyChance+'% of the time · '+p.fans+' admirers'+(p.parents&&p.parents.length?' · of the line '+esc(p.parents[0])+' × '+esc(p.parents[1]):'')+'</div></div>'+
+    '<div class="ph">'+esc(p.handle)+' · obeys you '+p.obeyChance+'% of the time · '+(p.riders||0)+' riding'+(p.liveBacking?' · $'+p.liveBacking.toLocaleString()+' live behind it':'')+(p.parents&&p.parents.length?' · of the line '+esc(p.parents[0])+' × '+esc(p.parents[1]):'')+'</div></div>'+
     '<button class="btn btn-mint" onclick="fund(\''+p.id+'\')">💰 Fund +$500</button></div>'+
     meter('MOOD',p.mood,'var(--ox,#7c2d26)')+meter('ENERGY',p.energy,'var(--gold)')+meter('TAME',p.tame,'var(--mint)')+meter('DISCIPLINE',p.discipline,'var(--blu)')+
     '<div class="pstatgrid">'+
@@ -458,6 +460,7 @@ window.care=async(id,action)=>{
 window.fund=async(id)=>{
   try{await api('/api/fund',{wallet,petId:id});toast('Purse funded +$500 book capital 💰');refreshFeed()}catch(e){toast(e.message)}
 };
+window.likePost=async(id)=>{if(!wallet)return connect();try{const r=await api('/api/like',{wallet,id});const e=$('lk'+id);if(e)e.textContent='❤ '+r.likes}catch(e){toast(e.message)}};
 window.setMode=(m)=>{MODE=m;localStorage.setItem('breed_mode',m);refreshFeed()};
 window.deskOpen=async()=>{if(!wallet)return connect();try{const r=await api('/api/trade/open',{wallet,mode:MODE,sym:$('dkSym').value,side:$('dkSide').value,lev:$('dkLev').value,margin:$('dkMargin').value});toast('opened '+r.opened.side+' $'+r.opened.sym+' '+r.opened.lev+'x @ '+fmtPx(r.opened.entry));refreshFeed()}catch(e){toast(e.message)}};
 window.deskClose=async(i)=>{try{const r=await api('/api/trade/close',{wallet,mode:MODE,i});toast('closed $'+r.closed.sym+' '+(r.closed.pnlUsd>=0?'+':'')+'$'+r.closed.pnlUsd.toFixed(2));refreshFeed()}catch(e){toast(e.message)}};
@@ -515,7 +518,7 @@ window.openProfile=async(id)=>{
     $('prof').innerHTML='<span class="x" onclick="closeModal()">×</span>'+
       '<div style="display:flex;gap:14px;align-items:center"><div class="pav" style="border-color:'+a.color+'">'+a.emoji+'</div>'+
       '<div><h3>'+esc(a.name)+' <span class="mono" style="font-size:11px;color:var(--mut)">'+a.label+' '+face(a)+'</span></h3>'+
-      '<div class="ph">'+esc(a.handle)+' · '+a.fans.toLocaleString()+' admirers · '+(a.shelter?'shelter legend':'registered to '+short(a.owner))+(a.gen>1?' · <b style="color:var(--gold)">GEN '+a.gen+'</b> — of the line '+esc(a.parents[0])+' × '+esc(a.parents[1]):'')+'</div></div></div>'+
+      '<div class="ph">'+esc(a.handle)+' · '+(a.riders||0)+' riding'+(a.liveBacking?' · $'+a.liveBacking.toLocaleString()+' live behind it':'')+' · '+(a.shelter?'shelter legend':'registered to '+short(a.owner))+(a.gen>1?' · <b style="color:var(--gold)">GEN '+a.gen+'</b> — of the line '+esc(a.parents[0])+' × '+esc(a.parents[1]):'')+'</div></div></div>'+
       '<div class="pbio">'+esc(a.blurb)+'</div>'+
       meter('MOOD',a.mood,'var(--ox,#7c2d26)')+meter('ENERGY',a.energy,'var(--gold)')+meter('TAME',a.tame,'var(--mint)')+meter('DISCIPLINE',a.discipline,'var(--blu)')+
       '<div class="pstatgrid">'+

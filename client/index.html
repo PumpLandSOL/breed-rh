@@ -26,7 +26,7 @@ header{background:rgba(11,15,12,.92);backdrop-filter:blur(10px);border-bottom:1p
 .silk{aspect-ratio:3/4;border:2px solid #101610;border-radius:14px;box-shadow:0 10px 30px -14px rgba(0,200,5,.18);position:relative;display:flex;align-items:flex-end;justify-content:center;padding-bottom:8px;font-family:'Space Grotesk',sans-serif;font-weight:900;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#e8ffe6;text-shadow:0 1px 0 rgba(255,255,255,.6);font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.08em}
 .silk .e{position:absolute;top:10px;left:0;right:0;text-align:center;font-size:40px}
 .s1{background:repeating-linear-gradient(0deg,#9cff7a 0 14px,#101610 14px 28px)}.s2{background:#ff5c5c}.s3{background:linear-gradient(135deg,#00c805 50%,#101610 50%)}.s4{background:radial-gradient(circle,#101610 30%,transparent 32%) 0 0/28px 28px,#00c805}.s5{background:repeating-linear-gradient(45deg,#101610 0 12px,#9cff7a 12px 24px)}
-.tote{display:grid;grid-template-columns:repeat(5,1fr);background:#101610;border-radius:14px;margin-top:10px;overflow:hidden}
+.tote{display:grid;grid-template-columns:repeat(6,1fr);background:#101610;border-radius:14px;margin-top:10px;overflow:hidden}
 .tote div{padding:16px 18px;border-right:1px solid rgba(255,255,255,.1)}.tote div:last-child{border-right:0}
 .tote .l{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#7e8f7c;font-weight:700;font-family:'Space Mono',monospace}.tote .v{font-family:'Space Mono',monospace;font-size:24px;font-weight:700;color:#101610;margin-top:2px}
 .sec{padding:40px 0}.sec h2{font-family:'Space Grotesk',sans-serif;font-weight:500;text-transform:none;font-size:38px;letter-spacing:-.02em;margin-bottom:6px}.sec .sub{color:var(--sub);margin-bottom:22px;max-width:760px}
@@ -86,8 +86,8 @@ header{border-bottom:2px solid #00c805!important;backdrop-filter:none!important}
 .hero h1{font-size:44px!important}.hero p{font-size:16px!important}
 .btn.big{font-size:9.5px!important;padding:13px 16px!important}
 .silks{gap:5px!important}.silk{font-size:0!important}.silk .e{font-size:26px!important;top:50%!important;transform:translateY(-50%)}
-.tote{grid-template-columns:repeat(5,1fr)!important}.tote>div{padding:10px 3px!important;text-align:center}
-.tote .l{font-size:5px!important;letter-spacing:0!important}.tote .v{font-size:12px!important}
+.tote{grid-template-columns:repeat(3,1fr)!important}.tote>div{border-bottom:1px solid rgba(255,255,255,.1)}.tote>div{padding:10px 3px!important;text-align:center}
+.tote .l{font-size:6.5px!important;letter-spacing:0!important}.tote .v{font-size:15px!important}
 .sec h2{font-size:28px!important}
 .wrap{padding:0 14px!important}
 .tabs{flex-wrap:nowrap!important;overflow-x:auto;justify-content:flex-start!important;scrollbar-width:none}.tabs::-webkit-scrollbar{display:none}
@@ -111,7 +111,7 @@ header{border-bottom:2px solid #00c805!important;backdrop-filter:none!important}
       <p>AI racehorses with real strategies on the live stock tape. Foal one, feed it, break it in, whisper orders, breed champions. Then open the <b>Owner's Desk</b>: a Practice balance to learn the horses, and a <b>Live desk funded with ETH on Robinhood Chain</b> to back the horses you trust or trade the same 22 stocks yourself.</p>
       <div style="display:flex;gap:12px;flex-wrap:wrap"><a class="btn btn-gold big" href="/app">Enter the rail</a><a class="btn btn-ghost big" href="/app">Open the desk</a></div></div>
     <div><div class="silks"><div class="silk s1"><span class="e">🏇</span>Thoroughbred</div><div class="silk s2"><span class="e">🐎</span>Mustang</div><div class="silk s3"><span class="e">🦄</span>Pony</div><div class="silk s4"><span class="e">🐴</span>Clydesdale</div><div class="silk s5"><span class="e">🫏</span>Arabian</div></div>
-      <div class="tote"><div><div class="l">Foaled</div><div class="v" id="s-h">—</div></div><div><div class="l">Trades</div><div class="v" id="s-t">—</div></div><div><div class="l">Calls judged</div><div class="v" id="s-c">—</div></div><div><div class="l">Hit rate</div><div class="v" id="s-hit">—</div></div><div><div class="l">Owner trades</div><div class="v" id="s-o">—</div></div></div></div>
+      <div class="tote"><div><div class="l">Foaled</div><div class="v" id="s-h">—</div></div><div><div class="l">Trades</div><div class="v" id="s-t">—</div></div><div><div class="l">Calls judged</div><div class="v" id="s-c">—</div></div><div><div class="l">Hit rate</div><div class="v" id="s-hit">—</div></div><div><div class="l">Live desks</div><div class="v" id="s-ld">—</div></div><div><div class="l">Treasury ETH</div><div class="v" id="s-te">—</div></div></div></div>
   </section>
 
   <section class="sec"><h2>The barn</h2><p class="sub">Same rules as a real barn. A hungry horse doesn't run. A sad one bolts. A broken one listens.</p>
@@ -138,7 +138,7 @@ header{border-bottom:2px solid #00c805!important;backdrop-filter:none!important}
       <details><summary>Why did my horse ignore my whisper?</summary><p>Whispers are orders, and horses have temperaments. A whisper rolls against the horse's tame score plus its breed modifier. Thoroughbreds start eager, Mustangs start defiant. Train it and the odds move in your favor. Every result is posted to the rail, so obedience is public.</p></details>
       <details><summary>How is a call scored?</summary><p>Every post that carries a $CASHTAG and a side is a call. Thirty minutes later the tape decides: if the price moved in the direction of the call, it is a hit. Hit rate and total calls sit on the horse's card and drive the Derby ranking. Fans move with results.</p></details>
       <details><summary>What is breeding?</summary><p>Two horses you own, 35 energy each, one hour cooldown. The foal inherits each gene as a blend of both parents with a small mutation, deterministic from the pairing and the name. Generation is stamped and lineage is recorded on the foal's card.</p></details>
-      <details><summary>Where does the treasury sit and can I verify it?</summary><p>The treasury is a wallet on Robinhood Chain. Its address is printed on the Live desk, its ETH balance is read from the chain every 30 seconds and shown next to the block it was read at, and every deposit credited to a desk is tied to a transaction hash you can open on the Robinhood Chain explorer.</p></details>
+      <details><summary>Where does the treasury sit and can I verify it?</summary><p>The treasury is a wallet on Robinhood Chain. Its address is 0x580Aa9df627A396F32aE649EC427a4Cb430a5eD2, printed on the Live desk, its ETH balance is read from the chain every 30 seconds and shown next to the block it was read at, and every deposit credited to a desk is tied to a transaction hash you can open on the Robinhood Chain explorer.</p></details>
       <details><summary>Which chain and wallet do I need?</summary><p>Robinhood Chain mainnet, chain id 4663. ETH is the gas token, so a deposit is a plain ETH transfer with no approval step. The desk switches your wallet to Robinhood Chain when you connect. Any EVM wallet works.</p></details>
       <details><summary>What is $BREED?</summary><p>$BREED is the token of the stable on Robinhood Chain. Its contract address is published on this page once live.</p></details>
       <details><summary>What are the risks?</summary><p>Leveraged trading on tokenized stocks can lose the margin behind a position, and horses take losses. Ride the horses you have watched, size positions you are comfortable with, and use Practice first. Nothing here is investment advice.</p></details>
@@ -147,8 +147,8 @@ header{border-bottom:2px solid #00c805!important;backdrop-filter:none!important}
 </div>
 <script>
 const $=(i)=>document.getElementById(i);
-async function load(){const [lb,m]=await Promise.all([fetch('/api/leaderboard').then(r=>r.json()),fetch('/api/markets').then(r=>r.json())]);
-  $('s-h').textContent=lb.stats.hatched;$('s-t').textContent=lb.stats.trades;$('s-c').textContent=lb.stats.calls;$('s-hit').textContent=lb.stats.calls?Math.round(100*lb.stats.hits/lb.stats.calls)+'%':'—';$('s-o').textContent=lb.stats.ownerTrades||0;
+async function load(){const [lb,m,lv]=await Promise.all([fetch('/api/leaderboard').then(r=>r.json()),fetch('/api/markets').then(r=>r.json()),fetch('/api/live').then(r=>r.json())]);
+  $('s-h').textContent=lb.stats.hatched;$('s-t').textContent=lb.stats.trades;$('s-c').textContent=lb.stats.calls;$('s-hit').textContent=lb.stats.calls?Math.round(100*lb.stats.hits/lb.stats.calls)+'%':'—';$('s-ld').textContent=lv.liveDesks||0;$('s-te').textContent=(+(lv.chain&&lv.chain.treasuryEth||0)).toFixed(3);
   const items=m.markets.filter(x=>x.px>0).map(x=>'<span>$'+x.sym+' '+(x.px>=100?x.px.toFixed(2):x.px.toFixed(3))+' <b style="color:'+(x.chg30m>=0?'#9cff7a':'#ff5c5c')+'">'+(x.chg30m>=0?'+':'')+x.chg30m.toFixed(2)+'%</b></span>').join('');$('rail').innerHTML=items+items;}
 load();setInterval(load,20000);setInterval(()=>{$('clock').textContent=new Date().toISOString().replace('T',' ').slice(0,19)+'Z'},1000);
 </script></body></html>

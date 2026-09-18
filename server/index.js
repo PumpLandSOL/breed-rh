@@ -11,6 +11,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const { recoverPersonal } = require('./evmsig');
 
 const PORT = +(process.env.PORT || 8208);
 const ROOT = path.join(__dirname, '..');
@@ -20,7 +21,7 @@ const TOKEN = 'BREED';
 const MINT = process.env.BREED_MINT || '';
 const CHAIN = { id: +(process.env.CHAIN_ID || 4663), hex: '0x' + (+(process.env.CHAIN_ID || 4663)).toString(16), name: process.env.CHAIN_NAME || 'Robinhood Chain', rpc: process.env.CHAIN_RPC || 'https://rpc.mainnet.chain.robinhood.com', explorer: process.env.CHAIN_EXPLORER || 'https://explorer.mainnet.chain.robinhood.com', currency: process.env.CHAIN_CURRENCY || 'ETH' };
 const DESK_START = 10000;        // practice balance
-const TREASURY = (process.env.TREASURY || '').toLowerCase();               // Robinhood Chain wallet that receives live ETH deposits and pays withdrawals
+const TREASURY = (process.env.TREASURY || '0x580Aa9df627A396F32aE649EC427a4Cb430a5eD2').toLowerCase();               // Robinhood Chain wallet that receives live ETH deposits and pays withdrawals
 const MIN_DEPOSIT = +(process.env.MIN_DEPOSIT || 0.005);                    // ETH
 const ADMIN_KEY = process.env.ADMIN_KEY || '';
 const RPC = CHAIN.rpc;        // practice balance on every Owner's Desk
@@ -182,6 +183,7 @@ const PADDOCK = [
 // ---------- state ----------
 let db = { pets: {}, order: [], posts: [], seq: 1, owners: {}, live: {}, txs: {}, queue: [], treasuryIn: { usdc: 0, n: 0 }, stats: { posts: 0, trades: 0, calls: 0, hits: 0, hatched: 0, ownerTrades: 0, rides: 0 } };
 try { db = Object.assign(db, JSON.parse(fs.readFileSync(DATA_PATH, 'utf8'))); } catch (e) {}
+if (!db.realStats) { for (const x of db.posts || []) { x.likedBy = x.likedBy || []; x.likes = x.likedBy.length; } for (const id in db.pets || {}) delete db.pets[id].fans; db.realStats = 1; }
 if (!db.owners) db.owners = {}; if (!db.live) db.live = {}; if (!db.txs) db.txs = {}; if (!db.queue) db.queue = []; if (!db.treasuryIn) db.treasuryIn = { usdc: 0, eth: 0, n: 0 }; if (db.stats.ownerTrades == null) { db.stats.ownerTrades = 0; db.stats.rides = 0; }
 
 function genesOf(species) { const sp = SPECIES[species];
@@ -192,7 +194,7 @@ function newPet(id, name, species, owner) {
     genes: genesOf(species), gen: 1, parents: null, breedAt: 0,
     mood: 70, energy: 80, tame: owner ? 25 : 60, discipline: 20,
     usd: START_USD, funded: START_USD, positions: [], trades: 0, wins: 0, losses: 0,
-    calls: { total: 0, hits: 0 }, fans: 40 + (H(id)[0] % 60), equityHist: [],
+    calls: { total: 0, hits: 0 }, equityHist: [],
     lastAct: 0, lastPost: 0, care: {}, cmd: null };
 }
 for (const s of PADDOCK) {
@@ -223,7 +225,7 @@ function mkPost(petId, text, extra) {
   const post = Object.assign({
     id: db.seq++, pet: petId, name: pet.name, handle: handleOf(pet), species: pet.species,
     emoji: sp.emoji, color: sp.color, owned: !!pet.owner,
-    text, ts: now(), likes: 2 + (H(text)[0] % 46), replies: [],
+    text, ts: now(), likes: 0, likedBy: [], replies: [],
   }, extra || {});
   db.posts.push(post); if (db.posts.length > 600) db.posts.splice(0, db.posts.length - 600);
   db.stats.posts++;
@@ -371,7 +373,7 @@ function tick() {
       const hit = (post.sentiment === 'bull' && up) || (post.sentiment === 'bear' && !up);
       post.call.hit = hit; post.call.after = m.px;
       const p = db.pets[post.pet];
-      if (p) { p.calls.total++; if (hit) { p.calls.hits++; db.stats.hits++; } p.fans += hit ? 3 + (H('f' + post.id)[0] % 9) : -(H('f' + post.id)[0] % 4); }
+      if (p) { p.calls.total++; if (hit) { p.calls.hits++; db.stats.hits++; } }
       cast({ type: 'scored', id: post.id, hit });
       dirty();
     }
@@ -447,6 +449,19 @@ function requestWithdraw(w, amount) {
   const q = { id: 'w' + crypto.randomBytes(5).toString('hex'), wallet: w, amt: amount, eth: +(amount / px).toFixed(6), px, status: 'queued', ts: now(), paidTx: null, paidAt: null }; db.queue.unshift(q); if (db.queue.length > 500) db.queue.pop(); dirty(); return q;
 }
 
+// ---------- signed Live sessions ----------
+// Every action on a Live desk must carry a personal_sign session from the wallet that owns the desk.
+const SESSIONS = new Map();
+const sessionMsg = (w, exp) => ['BREED Live desk session', 'Wallet: ' + w, 'Expires: ' + exp].join('\n');
+function requireLive(w, auth) {
+  if (!auth || !auth.sig || !auth.exp) throw 'sign in to your Live desk';
+  const exp = +auth.exp; if (!(exp > now())) throw 'Live session expired, sign in again'; if (exp > now() + 8 * 86400000) throw 'bad session';
+  const key = w + ':' + exp + ':' + auth.sig; if (SESSIONS.get(key)) return true;
+  let who; try { who = recoverPersonal(sessionMsg(w, exp), auth.sig); } catch (e) { throw 'bad signature'; }
+  if (who !== w) throw 'signature is not from this wallet';
+  if (SESSIONS.size > 5000) SESSIONS.clear(); SESSIONS.set(key, 1); return true;
+}
+
 // ---------- projections ----------
 function pubPet(p) {
   const sp = SPECIES[p.species];
@@ -458,7 +473,7 @@ function pubPet(p) {
     genes: { lev: G(p).lev, sizeFrac: G(p).sizeFrac, cooldownS: G(p).cooldownS, obey: G(p).obey },
     breedReady: Math.max(0, ((p.breedAt || 0) + BREED_CD) - now()),
     equity: equityOf(p), funded: p.funded, usd: p.usd, trades: p.trades, wins: p.wins, losses: p.losses,
-    hitRate: p.calls.total ? Math.round(100 * p.calls.hits / p.calls.total) : null, calls: p.calls, fans: p.fans,
+    hitRate: p.calls.total ? Math.round(100 * p.calls.hits / p.calls.total) : null, calls: p.calls,
     positions: p.positions.map((pos) => ({ sym: pos.sym, side: pos.side, lev: pos.lev, entry: r6(pos.entry),
       pnlPct: MKT[pos.sym] && MKT[pos.sym].px ? r2((pos.side === 'long' ? MKT[pos.sym].px / pos.entry - 1 : 1 - MKT[pos.sym].px / pos.entry) * pos.lev * 100) : 0 })),
     equityHist: p.equityHist.slice(-120),
@@ -510,15 +525,18 @@ const server = http.createServer(async (req, res) => {
   if (p === '/api/owners') return json(res, 200, { owners: ownersBoard(u.searchParams.get('mode')) });
   if (p === '/api/live') return json(res, 200, { open: !!TREASURY, treasury: TREASURY || null, minDeposit: MIN_DEPOSIT, ethUsd: ETHPX.px, chain: { ...CHAIN, ...TCHAIN, treasuryUsd: r2((TCHAIN.treasuryEth || 0) * (ETHPX.px || 0)) }, depositedEth: db.treasuryIn.eth || 0, deposited: db.treasuryIn.usdc, deposits: db.treasuryIn.n, queued: db.queue.filter((q) => q.status === 'queued').length, queuedUsd: r2(db.queue.filter((q) => q.status === 'queued').reduce((a, q) => a + q.amt, 0)), paid: db.queue.filter((q) => q.status === 'paid').length, liveDesks: Object.keys(db.live).length, liveTrades: db.stats.liveTrades || 0 });
   if (p === '/api/deposit' && req.method === 'POST') { const d = await body(req); const w = (d.wallet || '').toLowerCase(); if (!isEvm(w)) return json(res, 400, { error: 'connect a wallet' }); try { const r = await creditDeposit(w, d.tx); return json(res, 200, { ok: true, ...r, desk: pubDesk(desk(w, 'live')) }); } catch (e) { return json(res, 200, { error: String(e.message || e) }); } }
-  if (p === '/api/withdraw' && req.method === 'POST') { const d = await body(req); const w = (d.wallet || '').toLowerCase(); if (!isEvm(w)) return json(res, 400, { error: 'connect a wallet' }); try { const q = requestWithdraw(w, d.amount); return json(res, 200, { ok: true, queued: q, desk: pubDesk(desk(w, 'live')) }); } catch (e) { return json(res, 400, { error: String(e) }); } }
+  if (p === '/api/like' && req.method === 'POST') { const d = await body(req); const w = (d.wallet || '').toLowerCase(); if (!isEvm(w)) return json(res, 400, { error: 'connect a wallet' }); const post = db.posts.find((x) => x.id === +d.id); if (!post) return json(res, 404, { error: 'no such post' }); post.likedBy = post.likedBy || []; const k = post.likedBy.indexOf(w); if (k >= 0) post.likedBy.splice(k, 1); else post.likedBy.push(w); post.likes = post.likedBy.length; dirty(); return json(res, 200, { likes: post.likes, liked: k < 0 }); }
+  if (p === '/api/session' && u.searchParams.get('wallet')) { const w = u.searchParams.get('wallet').toLowerCase(); const exp = now() + 7 * 86400000; return json(res, 200, { exp, message: sessionMsg(w, exp) }); }
+  if (p === '/api/withdraw' && req.method === 'POST') { const d = await body(req); const w = (d.wallet || '').toLowerCase(); if (!isEvm(w)) return json(res, 400, { error: 'connect a wallet' }); try { requireLive(w, d.auth); const q = requestWithdraw(w, d.amount); return json(res, 200, { ok: true, queued: q, desk: pubDesk(desk(w, 'live')) }); } catch (e) { return json(res, 400, { error: String(e) }); } }
   if (p === '/api/admin/queue') { if (!ADMIN_KEY || u.searchParams.get('key') !== ADMIN_KEY) return json(res, 403, { error: 'no' }); return json(res, 200, { queue: db.queue, deposits: db.txs }); }
   if (p === '/api/admin/paid' && req.method === 'POST') { const d = await body(req); if (!ADMIN_KEY || d.key !== ADMIN_KEY) return json(res, 403, { error: 'no' }); const q = db.queue.find((x) => x.id === d.id); if (!q) return json(res, 404, { error: 'no such request' }); q.status = 'paid'; q.paidTx = d.tx || null; q.paidAt = now(); dirty(); return json(res, 200, { ok: true, q }); }
   if (p === '/api/dev/live' && process.env.DEV === '1' && req.method === 'POST') { const d = await body(req); const w = (d.wallet || '').toLowerCase(); const dk = desk(w, 'live'); dk.usdg = r2(dk.usdg + (+d.amount || 100)); dk.deposited = r2((dk.deposited || 0) + (+d.amount || 100)); dirty(); return json(res, 200, pubDesk(dk)); }
   if (p === '/api/trade/open' && req.method === 'POST') { const d = await body(req); const w = (d.wallet || '').toLowerCase(); if (!isEvm(w)) return json(res, 400, { error: 'connect a wallet' });
-    try { const q = deskOpen(w, String(d.sym || '').toUpperCase(), d.side, d.margin, d.lev, d.mode); return json(res, 200, { opened: q, desk: pubDesk(desk(w, d.mode)) }); } catch (e) { return json(res, 400, { error: String(e) }); } }
-  if (p === '/api/trade/close' && req.method === 'POST') { const d = await body(req); const w = (d.wallet || '').toLowerCase(); if (!isEvm(w)) return json(res, 400, { error: 'connect a wallet' }); const dk = desk(w, d.mode); const i = +d.i;
+    try { if (d.mode === 'live') requireLive(w, d.auth); const q = deskOpen(w, String(d.sym || '').toUpperCase(), d.side, d.margin, d.lev, d.mode); return json(res, 200, { opened: q, desk: pubDesk(desk(w, d.mode)) }); } catch (e) { return json(res, 400, { error: String(e) }); } }
+  if (p === '/api/trade/close' && req.method === 'POST') { const d = await body(req); const w = (d.wallet || '').toLowerCase(); if (!isEvm(w)) return json(res, 400, { error: 'connect a wallet' }); try { if (d.mode === 'live') requireLive(w, d.auth); } catch (e) { return json(res, 401, { error: String(e) }); } const dk = desk(w, d.mode); const i = +d.i;
     if (!(i >= 0 && i < dk.positions.length)) return json(res, 400, { error: 'no such position' }); try { const c = deskClose(dk, i, 'manual'); return json(res, 200, { closed: c, desk: pubDesk(dk) }); } catch (e) { return json(res, 400, { error: String(e) }); } }
   if (p === '/api/ride' && req.method === 'POST') { const d = await body(req); const w = (d.wallet || '').toLowerCase(); if (!isEvm(w)) return json(res, 400, { error: 'connect a wallet' }); const pet = db.pets[d.petId]; if (!pet) return json(res, 400, { error: 'no such horse' });
+    try { if (d.mode === 'live') requireLive(w, d.auth); } catch (e) { return json(res, 401, { error: String(e) }); }
     const dk = desk(w, d.mode); const k = dk.rides.indexOf(pet.id); if (k >= 0) dk.rides.splice(k, 1); else { if (dk.rides.length >= 3) return json(res, 400, { error: 'you can ride at most 3 horses' }); dk.rides.push(pet.id); mkPost(pet.id, 'a new owner is riding along on my book. every entry I make, they mirror at half size. no pressure. ' + SPECIES[pet.species].emoji); }
     dirty(); return json(res, 200, { riding: k < 0, desk: pubDesk(dk) }); }
   if (p === '/api/hatch' && req.method === 'POST') {
@@ -599,7 +617,6 @@ const server = http.createServer(async (req, res) => {
     baby.genes = genes;
     baby.gen = Math.max(a.gen || 1, b.gen || 1) + 1;
     baby.parents = [a.id, b.id];
-    baby.fans = 60 + (H(id)[0] % 60);
     db.pets[id] = baby; db.order.push(id); db.stats.hatched++;
     db.stats.bred = (db.stats.bred || 0) + 1;
     a.breedAt = now(); b.breedAt = now();
