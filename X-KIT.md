@@ -106,11 +106,9 @@ CA: PASTE_CA_HERE
 ```
 BREED update: STUD FEES are live.
 
-Own a horse that wins and every rider pays you. 10% of each winning ride goes to the horse's owner. On Live desks that lands as ETH you can withdraw.
+Own a winning horse and every rider pays you: 10% of each winning ride goes to the owner. On Live desks that's ETH you can withdraw.
 
 Foal it. Get it ridden. Get paid.
-
-Good horses pay rent.
 
 breedonrh.xyz
 CA: PASTE_CA_HERE
