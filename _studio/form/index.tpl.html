@@ -55,7 +55,7 @@ td.n,th.n{text-align:right;font-family:var(--mono);font-size:13px}
 .hs{font-style:italic;color:var(--mut);font-size:13.5px;line-height:1.25}
 .silkv{display:block}
 .tote{margin-top:auto;background:#000;border:1px solid var(--hair);color:#f6e27a;display:grid;grid-template-columns:repeat(5,1fr);font-family:var(--mono)}
-.tote div{padding:12px 10px 10px;border-right:1px solid #3a362d;text-align:center}.tote div:last-child{border-right:0}
+.tote>div{padding:12px 10px 10px;border-right:1px solid #3a362d;text-align:center}.tote>div:last-child{border-right:0}
 .tote .l{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:#a79f8a}.tote .v{font-size:24px;font-weight:600;margin-top:2px;font-variant-numeric:tabular-nums}
 
 /* sections */
@@ -77,7 +77,7 @@ td.n,th.n{text-align:right;font-family:var(--mono);font-size:13px}
 .foot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;padding:16px 0 44px;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut)}
 ::selection{background:var(--green);color:var(--on)}
 @media (max-width:560px){.top>span{display:none}.top nav{width:100%;justify-content:space-between;gap:10px}}
-@media (max-width:900px){.front{grid-template-columns:1fr}.lead{border-right:0;border-bottom:1px solid var(--rule);padding-right:0}.field{padding-left:0}.cols{columns:1}.faq{columns:1}.sechead{grid-template-columns:1fr}.tote{grid-template-columns:repeat(3,1fr);margin-top:18px}.tote div{border-bottom:1px solid #3a362d}.hide-s{display:none}}
+@media (max-width:900px){.front{grid-template-columns:1fr}.lead{border-right:0;border-bottom:1px solid var(--rule);padding-right:0}.field{padding-left:0}.cols{columns:1}.faq{columns:1}.sechead{grid-template-columns:1fr}.tote{margin-top:18px}.tote>div{padding:10px 2px 8px}.tote .l{font-size:7.5px;letter-spacing:.06em}.tote .v{font-size:17px}.cardhead .lab{display:none}td{padding:8px 4px;font-size:14px}td.n,th.n{font-size:12px}.hn{font-size:17px}.pp{font-size:19px;width:22px}.hide-s{display:none}}
 @media (prefers-reduced-motion:reduce){.tape .in{animation:none}}
 </style></head><body>
 <div class="sheet">
@@ -102,7 +102,7 @@ td.n,th.n{text-align:right;font-family:var(--mono);font-size:13px}
 
   <section class="sec" id="mlsec" style="display:none">
     <div class="sechead"><h2>Morning line</h2><p>The books as they stand right now, ranked by return on capital. Every number is off the live tape.</p></div>
-    <div class="line"><table><thead><tr><th>#</th><th>Silks</th><th>Horse</th><th class="hide-s">Breed</th><th class="n hide-s">Gen</th><th class="n">Calls</th><th class="n">Hit</th><th class="n">Book</th><th class="n">Return</th><th class="n hide-s">Riders</th></tr></thead><tbody id="ml"></tbody></table></div>
+    <div class="line"><table><thead><tr><th>#</th><th>Silks</th><th>Horse</th><th class="hide-s">Breed</th><th class="n hide-s">Gen</th><th class="n hide-s">Calls</th><th class="n">Hit</th><th class="n hide-s">Book</th><th class="n">Return</th><th class="n hide-s">Riders</th></tr></thead><tbody id="ml"></tbody></table></div>
   </section>
 
   <section class="sec">
@@ -133,6 +133,6 @@ const esc=(s)=>String(s).replace(/[&<>"]/g,(c)=>({'&':'&amp;','<':'&lt;','>':'&g
 async function load(){const [lb,m]=await Promise.all([fetch('/api/leaderboard').then(r=>r.json()),fetch('/api/markets').then(r=>r.json())]);
   $('s-h').textContent=lb.stats.hatched;$('s-t').textContent=lb.stats.trades;$('s-c').textContent=lb.stats.calls;$('s-hit').textContent=lb.stats.calls?Math.round(100*lb.stats.hits/lb.stats.calls)+'%':'—';$('s-o').textContent=lb.stats.ownerTrades||0;
   const items=m.markets.filter(x=>x.px>0).map(x=>'<span>'+x.sym+' '+(x.px>=100?x.px.toFixed(2):x.px.toFixed(3))+' <b class="'+(x.chg30m>=0?'up':'dn')+'">'+(x.chg30m>=0?'+':'')+x.chg30m.toFixed(2)+'%</b></span>').join('');if(items)$('rail').innerHTML=items+items;
-  const rows=(lb.rich||[]).slice(0,8);if(rows.length){$('mlsec').style.display='';$('ml').innerHTML=rows.map((p,i)=>{const ret=100*(p.equity/Math.max(1,p.funded)-1);return '<tr><td class="pp">'+(i+1)+'</td><td>'+silk(p.color,30)+'</td><td><div class="hn">'+esc(p.name)+'</div></td><td class="hide-s hs">'+esc(p.label.charAt(0)+p.label.slice(1).toLowerCase())+'</td><td class="n hide-s">'+p.gen+'</td><td class="n">'+p.calls.total+'</td><td class="n">'+(p.hitRate!=null?p.hitRate+'%':'—')+'</td><td class="n">$'+Math.round(p.equity).toLocaleString()+'</td><td class="n '+(ret>=0?'up':'dn')+'">'+(ret>=0?'+':'')+ret.toFixed(1)+'%</td><td class="n hide-s">'+(p.riders||0)+'</td></tr>'}).join('')}}
+  const rows=(lb.rich||[]).slice(0,8);if(rows.length){$('mlsec').style.display='';$('ml').innerHTML=rows.map((p,i)=>{const ret=100*(p.equity/Math.max(1,p.funded)-1);return '<tr><td class="pp">'+(i+1)+'</td><td>'+silk(p.color,30)+'</td><td><div class="hn">'+esc(p.name)+'</div></td><td class="hide-s hs">'+esc(p.label.charAt(0)+p.label.slice(1).toLowerCase())+'</td><td class="n hide-s">'+p.gen+'</td><td class="n hide-s">'+p.calls.total+'</td><td class="n">'+(p.hitRate!=null?p.hitRate+'%':'—')+'</td><td class="n hide-s">$'+Math.round(p.equity).toLocaleString()+'</td><td class="n '+(ret>=0?'up':'dn')+'">'+(ret>=0?'+':'')+ret.toFixed(1)+'%</td><td class="n hide-s">'+(p.riders||0)+'</td></tr>'}).join('')}}
 load();setInterval(load,20000);setInterval(()=>{$('clock').textContent=new Date().toISOString().replace('T',' ').slice(0,19)+'Z'},1000);
 </script></body></html>

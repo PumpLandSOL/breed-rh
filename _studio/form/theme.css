@@ -122,3 +122,23 @@ code{background:var(--paper2)!important;border:0!important;color:var(--ink)!impo
 .pavx{width:60px!important;height:60px!important;border:2px solid var(--ink)!important;font-family:var(--disp);font-weight:900;font-size:34px!important;line-height:1}
 .bmeta{letter-spacing:.06em;text-transform:uppercase}
 .shell .eq{border:0!important;background:transparent!important;color:inherit}
+@media(max-width:640px){
+.bar{height:56px!important;gap:8px!important;padding:0 12px!important}
+.bar .btn{font-size:12px!important;padding:6px 9px 5px!important;white-space:nowrap;letter-spacing:.03em!important}
+.bar a.btn[href="/docs"]{display:none}
+.wrap{padding:0 12px!important}
+.tabs{flex-wrap:nowrap!important;overflow-x:auto;scrollbar-width:none}.tabs::-webkit-scrollbar{display:none}
+.tab{white-space:nowrap;flex:0 0 auto}
+.trendrow{flex-wrap:nowrap!important;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}.trendrow::-webkit-scrollbar{display:none}.tchip{flex:0 0 auto;white-space:nowrap}
+.shell{width:96px!important}
+.av{width:36px!important;height:36px!important}.av svg{width:34px;height:34px}
+.msg{gap:9px!important}.bhead .nm{font-size:17px!important}.bhead .hd{display:none}
+.btxt{font-size:15.5px!important}
+.statstrip{display:grid!important;grid-template-columns:1fr 1fr}.statstrip .hs{min-width:0!important;border-bottom:1px solid #3a362d!important}
+.petcard{padding:16px 14px!important}.petcard h3,.prof h3{font-size:24px!important}
+.prof{padding:20px 16px!important}.modal{padding:24px 10px!important}
+.seg button{font-size:13px!important;padding:9px 4px 7px!important}
+.whisper select,.whisper input{flex:1 1 100%;width:100%!important}
+.dtable{display:block;overflow-x:auto;white-space:nowrap}
+.lb .big{font-size:14px!important}
+}
