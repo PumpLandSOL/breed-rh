@@ -79,15 +79,15 @@ setInterval(pollTape, 15000);
 // ---------- species ----------
 // A species is a temperament AND a strategy. obey = base obedience modifier.
 const SPECIES = {
-  dog:     { label: 'THOROUGHBRED', emoji: '🏇', color: '#c8102e', style: 'momentum', lev: 2, sizeFrac: 0.3,  cooldownS: 60,  maxPos: 3, obey: 20,
+  dog:     { label: 'THOROUGHBRED', emoji: '🏇', color: '#f5a623', style: 'momentum', lev: 2, sizeFrac: 0.3,  cooldownS: 60,  maxPos: 3, obey: 20,
              blurb: 'bred to run. longs whatever is breaking away from the pack. actually listens to the jockey.' },
-  cat:     { label: 'MUSTANG', emoji: '🐎', color: '#1b1b1b', style: 'fade',     lev: 2, sizeFrac: 0.25, cooldownS: 80,  maxPos: 3, obey: -15,
+  cat:     { label: 'MUSTANG', emoji: '🐎', color: '#c084fc', style: 'fade',     lev: 2, sizeFrac: 0.25, cooldownS: 80,  maxPos: 3, obey: -15,
              blurb: 'never broken. fades every pump out of spite. obeys nobody, least of all the owner.' },
-  hamster: { label: 'PONY', emoji: '🦄', color: '#e0a100', style: 'scalp',    lev: 3, sizeFrac: 0.2,  cooldownS: 35,  maxPos: 4, obey: 0,
+  hamster: { label: 'PONY', emoji: '🦄', color: '#ff2d95', style: 'scalp',    lev: 3, sizeFrac: 0.2,  cooldownS: 35,  maxPos: 4, obey: 0,
              blurb: 'tiny legs, 3x leverage, zero chill. scalps everything, rests never.' },
-  turtle:  { label: 'CLYDESDALE', emoji: '🐴', color: '#0b7a1e', style: 'index',    lev: 1, sizeFrac: 0.4,  cooldownS: 300, maxPos: 2, obey: 5,
+  turtle:  { label: 'CLYDESDALE', emoji: '🐴', color: '#37d67a', style: 'index',    lev: 1, sizeFrac: 0.4,  cooldownS: 300, maxPos: 2, obey: 5,
              blurb: 'the draft horse. pulls $SPY and $GLD at a walk, eats between candles. cannot be rushed.' },
-  parrot:  { label: 'ARABIAN', emoji: '🫏', color: '#1d3f8f', style: 'mimic',    lev: 2, sizeFrac: 0.3,  cooldownS: 70,  maxPos: 3, obey: 10,
+  parrot:  { label: 'ARABIAN', emoji: '🫏', color: '#29f3ff', style: 'mimic',    lev: 2, sizeFrac: 0.3,  cooldownS: 70,  maxPos: 3, obey: 10,
              blurb: 'runs where the herd runs, but with size. reads the rail and follows the loudest hoofbeats.' },
 };
 const SPECIES_KEYS = Object.keys(SPECIES);

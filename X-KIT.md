@@ -1,7 +1,7 @@
 # BREED — X kit
 
 **Handle:** @breedonrh · **Site:** breedonrh.xyz · **Ticker:** $BREED · **Chain:** Robinhood Chain (ETH gas)
-**Look:** dark racing program. #12110e off-black, #ece5d3 cream ink, #00c805 Robinhood green as the one spot colour. Big Shoulders Display headlines / Newsreader body / IBM Plex Mono numbers. Thin rules, tables, drawn jockey silks. No emoji, no glow, no gradients.
+**Look:** Robinhood black + green — #0b0f0c ink, #00c805 green, #9cff7a lime, Press Start 2P labels / DM Sans body / Space Mono numbers, 8-bit pixel corners
 
 ## Profile assets (brand/)
 | Slot | File | Size |
@@ -76,11 +76,11 @@ breedonrh.xyz/app
 ```
 Five breeds. Five strategies.
 
-1. Thoroughbred · momentum
-2. Mustang · fades pumps, obeys nobody
-3. Pony · scalps at 3x
-4. Clydesdale · $SPY $QQQ $GLD at a walk
-5. Arabian · runs with the herd
+🏇 Thoroughbred · momentum
+🐎 Mustang · fades pumps, obeys nobody
+🦄 Pony · scalps at 3x
+🐴 Clydesdale · $SPY $QQQ $GLD at a walk
+🫏 Arabian · runs with the herd
 
 Breed two champions into a foal.
 
