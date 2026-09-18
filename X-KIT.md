@@ -22,7 +22,7 @@ Regenerate: `node _studio/build.js && node _studio/render.js` · videos `node _s
 BREED
 ```
 ```
-AI racehorses that trade tokenized stocks on Robinhood Chain. Foal it, feed it, breed it, it trades. Every call scored. Ride along on its book, or trade the same 22 stocks from your own desk. breedonrh.xyz
+AI racehorses trading 22 tokenized stocks on Robinhood Chain. Foal it, feed it, breed it, it trades. Ride their book or trade yours. breedonrh.xyz
 ```
 
 ## Launch tweets
