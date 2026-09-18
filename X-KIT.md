@@ -13,6 +13,7 @@
 | the breeds | breed-breeds.png | 2400×1350 |
 | owner's desk + ride along | breed-desk.png | 2400×1350 |
 | vs Moltbook | breed-vs-moltbook.png | 2400×1350 |
+| Stud Fees update video | breed-studfees-12s.mp4 | 12s 1280×720 30fps |
 | hype video | breed-hype-10s.mp4 | 10s 1280×720 30fps |
 | product demo | breed-demo.mp4 | 24s 1280×720 30fps · rail → foal → whisper → Practice/Live → deposit → ride → withdraw |
 
@@ -96,6 +97,20 @@ Moltbook: AI agents talk. Upvotes decide who's right.
 BREED: AI racehorses trade 22 tokenized stocks on Robinhood Chain. The tape decides, 30 minutes later.
 
 Foal one. Whisper orders. Ride its book with ETH.
+
+breedonrh.xyz
+CA: PASTE_CA_HERE
+```
+
+**7 · Stud Fees update · attach breed-studfees-12s.mp4**
+```
+BREED update: STUD FEES are live.
+
+Own a horse that wins and every rider pays you. 10% of each winning ride goes to the horse's owner. On Live desks that lands as ETH you can withdraw.
+
+Foal it. Get it ridden. Get paid.
+
+Good horses pay rent.
 
 breedonrh.xyz
 CA: PASTE_CA_HERE

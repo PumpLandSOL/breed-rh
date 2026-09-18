@@ -26,6 +26,7 @@ const MIN_DEPOSIT = +(process.env.MIN_DEPOSIT || 0.005);                    // E
 const ADMIN_KEY = process.env.ADMIN_KEY || '';
 const RPC = CHAIN.rpc;        // practice balance on every Owner's Desk
 const DESK_MAX_LEV = 3;
+const STUD_FEE = 0.10;          // share of a rider's winning mirrored trade paid to the horse's owner
 const START_USD = 1000;          // hatchling book capital
 const FUND_STEP = 500;           // per feeding of the bag
 const MAX_USD_FUNDED = 10000;    // total book capital cap per pet
@@ -405,13 +406,23 @@ function deskOpen(w, sym, side, margin, lev, mode) {
   if (d.positions.length >= 8) throw 'max 8 open positions';
   d.usdg = r2(d.usdg - margin); const q = { sym, side, entry: MKT[sym].px, margin, lev, at: now() }; d.positions.push(q); d.trades++; db.stats.ownerTrades++; if (d.mode === 'live') db.stats.liveTrades = (db.stats.liveTrades || 0) + 1; dirty(); return q;
 }
+// Stud fee: when a mirrored trade closes in profit, 10% of that profit moves from the rider's desk to the desk of the horse's owner (same mode). Ledger-conserving.
+function studFee(d, q, pnlUsd) {
+  if (!q.ride || !(pnlUsd > 0)) return 0; const pet = db.pets[q.ride]; if (!pet || !pet.owner || pet.owner === d.wallet) return 0;
+  const fee = r2(pnlUsd * STUD_FEE); if (!(fee > 0)) return 0; const mode = d.mode === 'live' ? 'live' : 'practice'; const od = desk(pet.owner, mode);
+  d.usdg = r2(d.usdg - fee); d.studPaid = r2((d.studPaid || 0) + fee); od.usdg = r2(od.usdg + fee); od.studEarned = r2((od.studEarned || 0) + fee);
+  pet.stud = pet.stud || { live: 0, practice: 0, n: 0 }; pet.stud[mode] = r2(pet.stud[mode] + fee); pet.stud.n++;
+  db.stats.stud = db.stats.stud || { live: 0, practice: 0, n: 0 }; db.stats.stud[mode] = r2(db.stats.stud[mode] + fee); db.stats.stud.n++;
+  if (mode === 'live' || fee >= 5) mkPost(pet.id, 'stud fee paid. a rider banked $' + pnlUsd.toFixed(2) + ' on my $' + q.sym + ' and $' + fee.toFixed(2) + ' of it went to my owner' + (mode === 'live' ? ', in real ETH terms' : '') + '. good horses pay rent.');
+  return fee;
+}
 function deskClose(d, i, why) {
   const q = d.positions[i]; const m = MKT[q.sym]; if (!m || !(m.px > 0)) throw 'no live print';
   const ret = (q.side === 'long' ? m.px / q.entry - 1 : 1 - m.px / q.entry) * q.lev; const pnlUsd = r2(q.margin * ret);
-  d.usdg = r2(d.usdg + q.margin * (1 + ret)); d.positions.splice(i, 1); if (pnlUsd >= 0) d.wins++; else d.losses++; d.realized = r2((d.realized || 0) + pnlUsd);
-  d.hist.unshift({ sym: q.sym, side: q.side, lev: q.lev, margin: q.margin, entry: r6(q.entry), exit: r6(m.px), pnlUsd, pnlPct: r2(ret * 100), why, ride: q.ride || null, t: now() }); if (d.hist.length > 60) d.hist.pop(); dirty(); return d.hist[0];
+  d.usdg = r2(d.usdg + q.margin * (1 + ret)); const stud = studFee(d, q, pnlUsd); d.positions.splice(i, 1); if (pnlUsd >= 0) d.wins++; else d.losses++; d.realized = r2((d.realized || 0) + pnlUsd);
+  d.hist.unshift({ sym: q.sym, side: q.side, lev: q.lev, margin: q.margin, entry: r6(q.entry), exit: r6(m.px), pnlUsd, pnlPct: r2(ret * 100), why, ride: q.ride || null, stud, t: now() }); if (d.hist.length > 60) d.hist.pop(); dirty(); return d.hist[0];
 }
-function pubDesk(d) { const base = d.mode === 'live' ? Math.max(0.01, (d.deposited || 0) - (d.withdrawn || 0)) : DESK_START; return { wallet: d.wallet, mode: d.mode || 'practice', usdg: d.usdg, equity: deskEquity(d), start: d.mode === 'live' ? r2((d.deposited || 0) - (d.withdrawn || 0)) : DESK_START, deposited: d.deposited || 0, withdrawn: d.withdrawn || 0, roi: r2((deskEquity(d) / base - 1) * 100), queue: db.queue.filter((q) => q.wallet === d.wallet).slice(0, 10), trades: d.trades, wins: d.wins, losses: d.losses, realized: d.realized || 0, maxLev: DESK_MAX_LEV,
+function pubDesk(d) { const base = d.mode === 'live' ? Math.max(0.01, (d.deposited || 0) - (d.withdrawn || 0)) : DESK_START; return { wallet: d.wallet, mode: d.mode || 'practice', usdg: d.usdg, equity: deskEquity(d), start: d.mode === 'live' ? r2((d.deposited || 0) - (d.withdrawn || 0)) : DESK_START, deposited: d.deposited || 0, withdrawn: d.withdrawn || 0, roi: r2((deskEquity(d) / base - 1) * 100), queue: db.queue.filter((q) => q.wallet === d.wallet).slice(0, 10), studEarned: d.studEarned || 0, studPaid: d.studPaid || 0, trades: d.trades, wins: d.wins, losses: d.losses, realized: d.realized || 0, maxLev: DESK_MAX_LEV,
   rides: d.rides.map((id) => ({ id, name: db.pets[id] ? db.pets[id].name : id, emoji: db.pets[id] ? SPECIES[db.pets[id].species].emoji : '' })),
   positions: d.positions.map((q, i) => ({ i, sym: q.sym, side: q.side, lev: q.lev, margin: q.margin, entry: r6(q.entry), ride: q.ride ? (db.pets[q.ride] ? db.pets[q.ride].name : q.ride) : null, at: q.at,
     pnlPct: MKT[q.sym] && MKT[q.sym].px ? r2((q.side === 'long' ? MKT[q.sym].px / q.entry - 1 : 1 - MKT[q.sym].px / q.entry) * q.lev * 100) : 0,
@@ -473,7 +484,7 @@ function pubPet(p) {
     genes: { lev: G(p).lev, sizeFrac: G(p).sizeFrac, cooldownS: G(p).cooldownS, obey: G(p).obey },
     breedReady: Math.max(0, ((p.breedAt || 0) + BREED_CD) - now()),
     equity: equityOf(p), funded: p.funded, usd: p.usd, trades: p.trades, wins: p.wins, losses: p.losses,
-    hitRate: p.calls.total ? Math.round(100 * p.calls.hits / p.calls.total) : null, calls: p.calls,
+    hitRate: p.calls.total ? Math.round(100 * p.calls.hits / p.calls.total) : null, calls: p.calls, stud: p.stud || { live: 0, practice: 0, n: 0 },
     positions: p.positions.map((pos) => ({ sym: pos.sym, side: pos.side, lev: pos.lev, entry: r6(pos.entry),
       pnlPct: MKT[pos.sym] && MKT[pos.sym].px ? r2((pos.side === 'long' ? MKT[pos.sym].px / pos.entry - 1 : 1 - MKT[pos.sym].px / pos.entry) * pos.lev * 100) : 0 })),
     equityHist: p.equityHist.slice(-120),
@@ -518,7 +529,7 @@ const server = http.createServer(async (req, res) => {
     return json(res, 200, {
       callers: rows.filter((x) => x.calls.total >= 3).sort((a, b) => (b.hitRate || 0) - (a.hitRate || 0)),
       rich: rows.slice().sort((a, b) => (b.equity / Math.max(1, b.funded)) - (a.equity / Math.max(1, a.funded))),
-      owners: ownersBoard(), liveOwners: ownersBoard('live'), stats: db.stats });
+      owners: ownersBoard(), liveOwners: ownersBoard('live'), studs: rows.filter((x) => x.stud.n > 0).sort((a, b) => (b.stud.live - a.stud.live) || (b.stud.practice - a.stud.practice)).slice(0, 20), studFee: STUD_FEE, stats: db.stats });
   }
 
   if (p === '/api/desk') { const w = (u.searchParams.get('wallet') || '').toLowerCase(); if (!isEvm(w)) return json(res, 200, { error: 'wallet' }); return json(res, 200, pubDesk(desk(w, u.searchParams.get('mode')))); }
