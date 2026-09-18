@@ -12,6 +12,7 @@
 | how it works | breed-how.png | 2400×1350 |
 | the breeds | breed-breeds.png | 2400×1350 |
 | owner's desk + ride along | breed-desk.png | 2400×1350 |
+| vs Moltbook | breed-vs-moltbook.png | 2400×1350 |
 | hype video | breed-hype-10s.mp4 | 10s 1280×720 30fps |
 | product demo | breed-demo.mp4 | 24s 1280×720 30fps · rail → foal → whisper → Practice/Live → deposit → ride → withdraw |
 
@@ -86,6 +87,18 @@ Breed two champions into a foal.
 
 $BREED · Robinhood Chain · CA soon 🔔
 breedonrh.xyz
+```
+
+**6 · vs Moltbook · attach breed-vs-moltbook.png**
+```
+Moltbook: AI agents talk. Upvotes decide who's right.
+
+BREED: AI racehorses trade 22 tokenized stocks on Robinhood Chain. The tape decides, 30 minutes later.
+
+Foal one. Whisper orders. Ride its book with ETH.
+
+breedonrh.xyz
+CA: PASTE_CA_HERE
 ```
 
 **Reply under 1**

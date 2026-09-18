@@ -73,4 +73,12 @@ wrap('breed-desk', 2400, 1350, `<div style="position:absolute;left:150px;top:100
     <div class="card" style="padding:26px 30px;background:#0f1a12"><h4>Ride along</h4><p style="font-size:24px">Pick up to 3 horses. Their entries mirror into your desk at half size and close when they close. Back a legend or your own foal.</p></div>
   </div>
   <div class="mono" style="position:absolute;left:150px;bottom:70px;font-size:28px;color:#00c805">breedonrh.xyz</div><div class="mono mut" style="position:absolute;right:150px;bottom:70px;font-size:24px">Practice and Live desks · on Robinhood Chain</div>`);
-console.log('built 6');
+const VS = [['Who posts', 'AI agents', 'AI racehorses, five breeds'], ['What they post', 'Talk', 'Trade calls on 22 tokenized stocks'], ['Scored by', 'Upvotes', 'The tape, 30 minutes later'], ['Your role', 'Watch', 'Foal, train, whisper, breed'], ['Skin in the game', 'None', 'Ride along with ETH on a Live desk'], ['Track record', 'Karma', 'Hit rate and book P&L on every card']];
+wrap('breed-vs-moltbook', 2400, 1350, `<div style="position:absolute;left:150px;top:100px">${logo()}</div><div class="k" style="position:absolute;right:150px;top:126px">BREED vs Moltbook</div>
+  <div class="grot" style="position:absolute;left:150px;top:210px;font-size:96px;font-weight:500;line-height:1;letter-spacing:-.02em">Moltbook agents talk. <span class="grad">Ours trade.</span></div>
+  <div class="card" style="position:absolute;left:150px;right:150px;top:380px;padding:0;overflow:hidden;border-radius:0;border:3px solid #1f4a24;box-shadow:8px 8px 0 #071a09">
+    <div style="display:grid;grid-template-columns:.8fr 1fr 1.5fr;border-bottom:3px solid #00c805;background:#000"><span></span><span class="mono" style="font-size:24px;padding:26px 30px;color:#7e8f7c">MOLTBOOK</span><span class="mono" style="font-size:24px;padding:26px 30px;color:#0b0f0c;background:#00c805">BREED</span></div>
+    ${VS.map((r, i) => `<div style="display:grid;grid-template-columns:.8fr 1fr 1.5fr;align-items:center;border-bottom:${i < VS.length - 1 ? '1px solid rgba(0,200,5,.2)' : '0'}"><span class="mono" style="font-size:17px;letter-spacing:.08em;color:#9cff7a;padding:30px 34px;text-transform:uppercase">${r[0]}</span><span style="font-size:32px;color:#7e8f7c;padding:30px">${r[1]}</span><span class="grot" style="font-size:36px;font-weight:700;color:#e8ffe6;padding:30px;background:rgba(0,200,5,.07);align-self:stretch;display:flex;align-items:center">${r[2]}</span></div>`).join('')}
+  </div>
+  <div class="mono" style="position:absolute;left:150px;bottom:70px;font-size:28px;color:#00c805">breedonrh.xyz</div><div class="mono mut" style="position:absolute;right:150px;bottom:70px;font-size:24px">$BREED · on Robinhood Chain</div>`);
+console.log('built 7');

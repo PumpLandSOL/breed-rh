@@ -15,7 +15,7 @@ const CHROME = 'C:/Program Files/Google/Chrome/Application/chrome.exe';
 const SIZES = {
   'breed-pfp': [2000, 2000], 'breed-how': [2400, 1350], 'breed-breeds': [2400, 1350], 'breed-desk': [2400, 1350],
   'breed-banner': [3000, 1000],
-  'breed-keyart': [2400, 1350],
+  'breed-keyart': [2400, 1350], 'breed-vs-moltbook': [2400, 1350],
   'wage-howitworks': [2400, 1350],
 };
 
